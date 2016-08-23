@@ -5,3 +5,7 @@
 Homestead.json
 Homestead.yaml
 .env
+log/
+deploy/
+deploy/!.gitkeep
+log/!.gitkeep

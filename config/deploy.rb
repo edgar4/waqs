@@ -36,7 +36,7 @@ set :repo_url, 'git@example.com:me/my_repo.git'
 # set :keep_releases, 5
 
 
-set :application, "Your app name"  # EDIT your app name
+set :application, "waqs"  # EDIT your app name
 set :repo_url,  "/Users/edgarchris/Desktop/waqs/.git/" # EDIT your git repository
 set :deploy_to, "/var/www/waqs" # EDIT folder where files should be deployed to
 
