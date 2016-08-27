@@ -27,30 +27,33 @@ class APIController extends Controller
         if ($validator->fails()) {
             return Response::json(['error' => [
                 'message' => 'Bad Registration Data',
-                'code' => 01
+                'code' => 'u01'
 
             ]], 406);
         } else {
             $password = Input::get('password');
             $name = Input::get('name');
             $email = Input::get('email');
-            $userCreated =User::create([
+            $uid = uniqid('', true);
+            $userCreated = User::create([
                 'name' => $name,
                 'email' => $email,
-                'password' => Hash::make($password)
+                'password' => Hash::make($password),
+                'unique_id' => $uid,
+
 
             ]);
-            if(!$userCreated){
+            if (!$userCreated) {
                 return Response::json(['error' => [
                     'message' => 'Hahaha , Something Funny happened!! ',
-                    'code' => 02
+                    'code' => 'u02'
                 ]]);
 
             }
-            return Response::json(['data' =>[
+            return Response::json(['data' => [
                 'message' => 'Boom!!  that all,  you can log in to your WAQ account'
 
-            ]],200);
+            ]], 200);
         }
     }
 
@@ -59,9 +62,9 @@ class APIController extends Controller
     {
         $input = $request->all();
         if (!$token = JWTAuth::attempt($input)) {
-            Response::json(['error' => [
+            return Response::json(['error' => [
                 'message' => 'wrong email or password.',
-                'code' => 03
+                'code' => 'u03'
 
             ]], 406);
 
@@ -86,7 +89,7 @@ class APIController extends Controller
         if ($validator->fails()) {
             return Response::json(['error' => [
                 'message' => 'Bad Authentication Data',
-                'code' => 03
+                'code' => 'u04'
 
             ]], 406);
         } else {
