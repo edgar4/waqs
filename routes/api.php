@@ -18,6 +18,7 @@ Route::group(['middleware' => ['api',]], function () {
     Route::post('login', 'APIController@login');
     Route::group(['middleware' => 'jwt-auth'], function () {
         Route::post('get_user_details', 'APIController@get_user_details');
+        Route::get('jobs','ApiJobController@index');
     });
 });
 
