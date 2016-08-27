@@ -25,16 +25,27 @@ class APIController extends Controller
         );
         $validator = Validator::make(Input::all(), $rules);
         if ($validator->fails()) {
-            return Response::json(['error' => [
-                'message' => 'Bad Registration Data',
+            return Response::json([
+                'error' => true,
+                'error_msg' => 'Bad Registration Data',
                 'code' => 'u01'
 
-            ]], 406);
+            ], 406);
         } else {
             $password = Input::get('password');
             $name = Input::get('name');
             $email = Input::get('email');
             $uid = uniqid('', true);
+            $isUserExist = User::where('email', '=', $email)->get()->toArray();
+            if ($isUserExist) {
+                return Response::json([
+                    'error' => true,
+                    'error_msg' => ' Wait a Minute Sparky , That Email is already registered ',
+                    'code' => 'u02'
+                ]);
+
+            }
+
             $userCreated = User::create([
                 'name' => $name,
                 'email' => $email,
@@ -44,16 +55,17 @@ class APIController extends Controller
 
             ]);
             if (!$userCreated) {
-                return Response::json(['error' => [
-                    'message' => 'Hahaha , Something Funny happened!! ',
-                    'code' => 'u02'
-                ]]);
+                return Response::json([
+                    'error' => true,
+                    'error_msg' => 'Hahaha , Something Funny happened!! ',
+                    'code' => 'u03'
+                ]);
 
             }
-            return Response::json(['data' => [
+            return Response::json([
                 'message' => 'Boom!!  that all,  you can log in to your WAQ account'
 
-            ]], 200);
+            ], 200);
         }
     }
 
@@ -62,20 +74,18 @@ class APIController extends Controller
     {
         $input = $request->all();
         if (!$token = JWTAuth::attempt($input)) {
-            return Response::json(['error' => [
-                'message' => 'wrong email or password.',
-                'code' => 'u03'
+            return Response::json([
+                'error' => true,
+                'error_msg' => 'wrong email or password.',
+                'code' => 'u04'
 
-            ]], 406);
+            ], 406);
 
         }
         $user = JWTAuth::toUser($token);
         return Response::json([
-            'data' => [
-                'user' => $user,
-                'token' => $token
-            ]
-
+            'user' => $user,
+            'token' => $token
         ], 200);
     }
 
@@ -89,12 +99,18 @@ class APIController extends Controller
         if ($validator->fails()) {
             return Response::json(['error' => [
                 'message' => 'Bad Authentication Data',
-                'code' => 'u04'
+                'code' => 'u05'
 
             ]], 406);
         } else {
             $token = Input::get('token');
             $user = JWTAuth::toUser($token);
+            return Response::json([
+                'user' => $user,
+                'token' => $token,
+                'error' => false
+
+            ], 200);
 
         }
 
